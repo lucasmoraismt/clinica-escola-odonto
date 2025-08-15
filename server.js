@@ -45,6 +45,64 @@ let userData = {
   tema: 'light',
   notificacoes: true
 };
+
+// Base de dados simulada para agendamentos
+let agendamentosHoje = [
+  {
+    id: 1,
+    horario: '08:00',
+    paciente: 'Maria da Silva',
+    status: 'Atendido',
+    procedimento: 'Consulta de Avaliação',
+    aluno: 'Carlos Andrade',
+    pacienteId: 1001
+  },
+  {
+    id: 2,
+    horario: '09:00',
+    paciente: 'José Oliveira',
+    status: 'Atendido',
+    procedimento: 'Restauração Dente 26',
+    aluno: 'Ana Beatriz',
+    pacienteId: 1002
+  },
+  {
+    id: 3,
+    horario: '10:30',
+    paciente: 'Ana Costa',
+    status: 'Atendido',
+    procedimento: 'Limpeza Dental',
+    aluno: 'Pedro Silva',
+    pacienteId: 1003
+  },
+  {
+    id: 4,
+    horario: '14:00',
+    paciente: 'Carlos Santos',
+    status: 'Pendente',
+    procedimento: 'Extração Dente 18',
+    aluno: 'Mariana Lopes',
+    pacienteId: 1004
+  },
+  {
+    id: 5,
+    horario: '15:30',
+    paciente: 'Fernanda Lima',
+    status: 'Confirmado',
+    procedimento: 'Canal Dente 36',
+    aluno: 'Roberto Mendes',
+    pacienteId: 1005
+  },
+  {
+    id: 6,
+    horario: '16:00',
+    paciente: 'Roberto Silva',
+    status: 'Confirmado',
+    procedimento: 'Prótese Parcial',
+    aluno: 'Julia Santos',
+    pacienteId: 1006
+  }
+];
 // -------------------------
 
 // =======================================================================
@@ -138,6 +196,54 @@ app.get('/api/pacientes/:id/fichas', async (req, res) => {
 });
 
 // =======================================================================
+//  ROTAS DA AGENDA
+// =======================================================================
+
+// Buscar agendamentos do dia
+app.get('/api/agenda', (req, res) => {
+  try {
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    const agendamentosComData = agendamentosHoje.map(agendamento => ({
+      ...agendamento,
+      data: hoje
+    }));
+    res.json(agendamentosComData);
+  } catch (error) {
+    console.error('Erro ao buscar agenda:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+// Buscar próximo paciente
+app.get('/api/agenda/proximo', (req, res) => {
+  try {
+    const agora = new Date();
+    const horaAtual = agora.getHours() * 60 + agora.getMinutes();
+    
+    const proximosAgendamentos = agendamentosHoje
+      .filter(ag => {
+        const [hora, minuto] = ag.horario.split(':').map(Number);
+        const horarioMinutos = hora * 60 + minuto;
+        return horarioMinutos >= horaAtual && ag.status !== 'Reagendado';
+      })
+      .sort((a, b) => {
+        const [horaA, minutoA] = a.horario.split(':').map(Number);
+        const [horaB, minutoB] = b.horario.split(':').map(Number);
+        return (horaA * 60 + minutoA) - (horaB * 60 + minutoB);
+      });
+
+    if (proximosAgendamentos.length > 0) {
+      res.json(proximosAgendamentos[0]);
+    } else {
+      res.json({ message: 'Não há mais agendamentos hoje.' });
+    }
+  } catch (error) {
+    console.error('Erro ao buscar próximo paciente:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+// =======================================================================
 //  ROTAS DE USUÁRIO/CONFIGURAÇÕES
 // =======================================================================
 
@@ -207,18 +313,60 @@ messageQueue.on('ATUALIZAR_USUARIO', async (dadosUsuario) => {
 });
 
 // =======================================================================
-//  API DO ASSISTENTE IA COM GOOGLE GEMINI
+//  API DO SECRETÁRIO IA COM GOOGLE GEMINI
 // =======================================================================
 
+// Função para obter resumo da agenda
+function getAgendaResumo() {
+  const total = agendamentosHoje.length;
+  const atendidos = agendamentosHoje.filter(ag => ag.status === 'Atendido').length;
+  const confirmados = agendamentosHoje.filter(ag => ag.status === 'Confirmado').length;
+  const pendentes = agendamentosHoje.filter(ag => ag.status === 'Pendente').length;
+  
+  const agora = new Date();
+  const horaAtual = agora.getHours() * 60 + agora.getMinutes();
+  
+  const proximoAgendamento = agendamentosHoje
+    .filter(ag => {
+      const [hora, minuto] = ag.horario.split(':').map(Number);
+      const horarioMinutos = hora * 60 + minuto;
+      return horarioMinutos >= horaAtual && ag.status !== 'Atendido';
+    })
+    .sort((a, b) => {
+      const [horaA, minutoA] = a.horario.split(':').map(Number);
+      const [horaB, minutoB] = b.horario.split(':').map(Number);
+      return (horaA * 60 + minutoA) - (horaB * 60 + minutoB);
+    })[0];
+
+  return {
+    total,
+    atendidos,
+    confirmados,
+    pendentes,
+    proximoPaciente: proximoAgendamento ? 
+      `${proximoAgendamento.paciente} às ${proximoAgendamento.horario} (${proximoAgendamento.procedimento}, Aluno: ${proximoAgendamento.aluno})` : 
+      'Não há mais agendamentos hoje'
+  };
+}
+
 // Contexto da clínica para o Gemini
-const clinicContext = `
-Você é um assistente IA especializado em odontologia para a Clínica Escola Odonto.
+function getClinicContext() {
+  const resumo = getAgendaResumo();
+  
+  return `
+Você é um secretário IA especializado em odontologia para a Clínica Escola Odonto.
 
 INFORMAÇÕES DA CLÍNICA:
 - Nome: Clínica Escola Odonto
 - Tipo: Clínica escola de odontologia
-- Hoje temos 8 consultas agendadas (6 confirmadas, 2 pendentes)
-- Próximo paciente: Ana Silva às 14:00 (Restauração dente 16, Aluno: Carlos Andrade)
+- Data: ${new Date().toLocaleDateString('pt-BR')}
+
+AGENDA DE HOJE:
+- Total de consultas: ${resumo.total}
+- Pacientes atendidos: ${resumo.atendidos}
+- Confirmados: ${resumo.confirmados}
+- Pendentes: ${resumo.pendentes}
+- Próximo paciente: ${resumo.proximoPaciente}
 
 SUAS ESPECIALIDADES:
 1. Procedimentos odontológicos (restauração, canal, extração, limpeza, etc.)
@@ -236,13 +384,14 @@ INSTRUÇÕES:
 - Se não souber algo específico da clínica, seja honesto
 - Limite suas respostas a aproximadamente 200 palavras
 `;
+}
 
 // Rota de teste simples
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Rota funcionando!' });
 });
 
-// Rota do chat do assistente com Gemini
+// Rota do chat do secretário com Gemini
 console.log('Registrando rota /api/chat...');
 app.post('/api/chat', async (req, res) => {
   console.log('Rota /api/chat chamada com:', req.body);
@@ -259,7 +408,7 @@ app.post('/api/chat', async (req, res) => {
     // Verificar se a API key está configurada
     if (GEMINI_API_KEY === 'SUA_API_KEY_AQUI') {
       return res.json({
-        response: '🔑 Para usar o assistente IA, configure sua API key do Google Gemini:\n\n1. Obtenha uma chave em: https://makersuite.google.com/app/apikey\n2. No servidor, substitua "SUA_API_KEY_AQUI" pela sua chave\n3. Ou defina a variável de ambiente GEMINI_API_KEY',
+        response: '🔑 Para usar o secretário IA, configure sua API key do Google Gemini:\n\n1. Obtenha uma chave em: https://makersuite.google.com/app/apikey\n2. No servidor, substitua "SUA_API_KEY_AQUI" pela sua chave\n3. Ou defina a variável de ambiente GEMINI_API_KEY',
         timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
       });
     }
@@ -269,8 +418,8 @@ app.post('/api/chat', async (req, res) => {
     // Configurar o modelo Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Criar prompt completo com contexto
-    const fullPrompt = `${clinicContext}\n\nPergunta do usuário: ${message}`;
+    // Criar prompt completo com contexto dinâmico
+    const fullPrompt = `${getClinicContext()}\n\nPergunta do usuário: ${message}`;
 
     // Gerar resposta
     const result = await model.generateContent(fullPrompt);

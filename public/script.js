@@ -24,6 +24,88 @@ function showView(viewId) {
   if (activeLink) {
     activeLink.classList.add('active');
   }
+
+  if (viewId === 'agenda-view') {
+    loadAgenda();
+  }
+}
+
+async function loadAgenda() {
+  try {
+    console.log('Carregando agenda...');
+    const response = await fetch('/api/agenda');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const agendamentos = await response.json();
+    console.log('Agendamentos recebidos:', agendamentos);
+    
+    const agendaLista = document.getElementById('agenda-lista');
+    const agendaData = document.getElementById('agenda-data');
+    
+    if (!agendaLista || !agendaData) {
+      console.error('Elementos da agenda não encontrados no DOM');
+      return;
+    }
+    
+    agendaData.textContent = new Date().toLocaleDateString('pt-BR');
+    
+    if (!Array.isArray(agendamentos) || agendamentos.length === 0) {
+      agendaLista.innerHTML = '<div class="list-group-item text-center py-4">Nenhum agendamento para hoje</div>';
+      return;
+    }
+    
+    agendaLista.innerHTML = agendamentos.map(agendamento => {
+      const statusClass = getStatusClass(agendamento.status);
+      const statusIcon = getStatusIcon(agendamento.status);
+      
+      return `
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">${agendamento.horario} - ${agendamento.paciente}</h5>
+            <small class="badge ${statusClass}">
+              <i class="bi ${statusIcon} me-1"></i>
+              ${agendamento.status}
+            </small>
+          </div>
+          <p class="mb-1">Procedimento: ${agendamento.procedimento}</p>
+          <small>Aluno: ${agendamento.aluno}</small>
+        </a>
+      `;
+    }).join('');
+    
+    console.log('Agenda carregada com sucesso');
+    
+  } catch (error) {
+    console.error('Erro ao carregar agenda:', error);
+    const agendaLista = document.getElementById('agenda-lista');
+    if (agendaLista) {
+      agendaLista.innerHTML = 
+        `<div class="list-group-item text-center py-4 text-danger">
+          Erro ao carregar agenda: ${error.message}
+        </div>`;
+    }
+  }
+}
+
+function getStatusClass(status) {
+  switch (status) {
+    case 'Atendido': return 'bg-success';
+    case 'Confirmado': return 'bg-primary';
+    case 'Pendente': return 'bg-warning text-dark';
+    default: return 'bg-secondary';
+  }
+}
+
+function getStatusIcon(status) {
+  switch (status) {
+    case 'Atendido': return 'bi-check-circle-fill';
+    case 'Confirmado': return 'bi-calendar-check';
+    case 'Pendente': return 'bi-clock';
+    default: return 'bi-question-circle';
+  }
 }
 
 // LIDA COM A BUSCA DE PACIENTES (REATORADO PARA SER MAIS ROBUSTO)
@@ -319,7 +401,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 });
 
 // =======================================================================
-//  FUNÇÕES DO CHAT/ASSISTENTE IA
+//  FUNÇÕES DO CHAT/SECRETÁRIO IA
 // =======================================================================
 
 async function handleChatSubmit(event) {
@@ -336,7 +418,7 @@ async function handleChatSubmit(event) {
   showTypingIndicator();
   
   try {
-    const response = await fetch('http://localhost:3001/api/chat', {
+    const response = await fetch('http://localhost:3000/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -470,7 +552,7 @@ function clearChat() {
       </div>
       <div class="message-content">
         <div class="message-text">
-          Olá! Sou o assistente da Clínica Escola Odonto. Posso ajudá-lo com:
+          Olá! Sou o secretário da Clínica Escola Odonto. Posso ajudá-lo com:
           <ul class="mt-2 mb-0">
             <li>Informações sobre pacientes</li>
             <li>Procedimentos odontológicos</li>

@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clínica Odonto - Prontuário Digital</title>
+  <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🦷%3c/text%3e%3c/svg%3e">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🦷%3c/text%3e%3c/svg%3e">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="style.css">
@@ -59,7 +61,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="showView('chat-view')">
-              <i class="bi bi-robot me-2"></i>Assistente IA
+              <i class="bi bi-robot me-2"></i>Secretário IA
             </a>
           </li>
         </ul>
@@ -141,26 +143,18 @@
 
     <section id="agenda-view" class="view" style="display: none;">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2><i class="bi bi-calendar2-week"></i> Agenda do Dia: 14/08/2025</h2>
+        <h2><i class="bi bi-calendar2-week"></i> Agenda do Dia: <span id="agenda-data">Carregando...</span></h2>
         <button class="btn btn-outline-secondary" onclick="showView('dashboard-view')"><i class="bi bi-arrow-left"></i> Voltar</button>
       </div>
-      <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">08:00 - Maria da Silva</h5>
-            <small>Status: Confirmado</small>
+      <div id="agenda-lista" class="list-group">
+        <div class="list-group-item">
+          <div class="text-center py-3">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2 mb-0">Carregando agenda...</p>
           </div>
-          <p class="mb-1">Procedimento: Consulta de Avaliação.</p>
-          <small>Aluno: Carlos Andrade</small>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">09:00 - José Oliveira</h5>
-            <small>Status: Aguardando</small>
-          </div>
-          <p class="mb-1">Procedimento: Restauração Dente 26.</p>
-          <small>Aluna: Ana Beatriz</small>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -389,7 +383,7 @@
 
     <section id="chat-view" class="view" style="display: none;">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2><i class="bi bi-robot"></i> Assistente IA - Clínica Odonto</h2>
+        <h2><i class="bi bi-robot"></i> Secretário IA - Clínica Odonto</h2>
         <button class="btn btn-outline-secondary" onclick="showView('dashboard-view')"><i class="bi bi-arrow-left"></i> Voltar</button>
       </div>
 
@@ -398,7 +392,7 @@
           <div class="card chat-container">
             <div class="card-header d-flex justify-content-between align-items-center">
               <div>
-                <h6 class="mb-0"><i class="bi bi-chat-dots"></i> Conversa com o Assistente</h6>
+                <h6 class="mb-0"><i class="bi bi-chat-dots"></i> Conversa com o Secretário</h6>
                 <small class="text-muted">Tire dúvidas sobre procedimentos, pacientes e agendamentos</small>
               </div>
               <button class="btn btn-sm btn-outline-danger" onclick="clearChat()">
@@ -413,7 +407,7 @@
                   </div>
                   <div class="message-content">
                     <div class="message-text">
-                      Olá! Sou o assistente da Clínica Escola Odonto. Posso ajudá-lo com:
+                      Olá! Sou o secretário da Clínica Escola Odonto. Posso ajudá-lo com:
                       <ul class="mt-2 mb-0">
                         <li>Informações sobre pacientes</li>
                         <li>Procedimentos odontológicos</li>
@@ -456,22 +450,13 @@
                 <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Qual é o próximo paciente?')">
                   <i class="bi bi-clock me-2"></i>Próximo paciente
                 </button>
-                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Como fazer uma restauração?')">
-                  <i class="bi bi-tools me-2"></i>Procedimentos
-                </button>
-                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Protocolo de anamnese')">
-                  <i class="bi bi-clipboard-check me-2"></i>Protocolos
-                </button>
-                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Emergências odontológicas')">
-                  <i class="bi bi-exclamation-triangle me-2"></i>Emergências
-                </button>
               </div>
             </div>
           </div>
 
           <div class="card mt-3">
             <div class="card-header">
-              <h6 class="mb-0"><i class="bi bi-info-circle"></i> Status do Assistente</h6>
+              <h6 class="mb-0"><i class="bi bi-info-circle"></i> Status do Secretário</h6>
             </div>
             <div class="card-body">
               <div class="d-flex align-items-center mb-2">

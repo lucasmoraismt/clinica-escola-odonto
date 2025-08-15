@@ -21,7 +21,11 @@ const TISAUDE_BASE_URL = 'https://api.tisaude.com';
 const AUTH_TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS50aXNhdWRlLmNvbSIsImlhdCI6MTc1NTIwOTcyOSwiZXhwIjoxNzU3ODAxNzI5LCJuYmYiOjE3NTUyMDk3MjksImp0aSI6IjFRTDZ1ZEwzYmxsdmpDZXMiLCJzdWIiOiI4Nzk2MyIsInBydiI6IjU4NzA4NjNkNGE2MmQ3OTE0NDNmYWY5MzZmYzM2ODAzMWQxMTBjNGYifQ.PT5m9YRmrMz4MNwgR7ib49WFVLOL6pxPNv3bMER0U8c'; 
 
 // Configuração do Google Gemini
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyAAr8Wx_1uOEu2gjdd3AagWzdQSUayaUsk';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.error('API key for Google Gemini is not configured.');
+  process.exit(1); // Exit the application if the key is missing
+}
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // Base de dados local simulada para dados do usuário
