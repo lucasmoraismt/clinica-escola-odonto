@@ -24,7 +24,97 @@
     </div>
   </nav>
 
-  <main class="container mt-4">
+  <div class="d-flex">
+    <aside class="sidebar bg-light border-end" id="sidebar">
+      <div class="sidebar-header p-3 border-bottom">
+        <h6 class="mb-0 text-muted">NAVEGAÇÃO</h6>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" onclick="showView('dashboard-view')">
+              <i class="bi bi-house-door me-2"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showView('agenda-view')">
+              <i class="bi bi-calendar2-week me-2"></i>Agenda
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showView('paciente-search-view')">
+              <i class="bi bi-people me-2"></i>Pacientes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showView('paciente-form-view')">
+              <i class="bi bi-person-plus me-2"></i>Novo Paciente
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showView('settings-view')">
+              <i class="bi bi-gear me-2"></i>Configurações
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showView('chat-view')">
+              <i class="bi bi-robot me-2"></i>Assistente IA
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-section p-3 border-top">
+        <h6 class="mb-2 text-muted">ESTATÍSTICAS HOJE</h6>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number text-primary">8</div>
+            <div class="stat-label">Consultas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number text-success">6</div>
+            <div class="stat-label">Confirmadas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number text-warning">2</div>
+            <div class="stat-label">Pendentes</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number text-info">15</div>
+            <div class="stat-label">Prontuários</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section p-3 border-top">
+        <h6 class="mb-2 text-muted">ACESSO RÁPIDO</h6>
+        <div class="d-grid gap-2">
+          <button class="btn btn-outline-primary btn-sm" onclick="showView('agenda-view')">
+            <i class="bi bi-clock me-1"></i>Próximo Paciente
+          </button>
+          <button class="btn btn-outline-success btn-sm" onclick="showView('paciente-form-view')">
+            <i class="bi bi-plus-circle me-1"></i>Emergência
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer p-3 border-top mt-auto">
+        <div class="user-info">
+          <div class="d-flex align-items-center">
+            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div>
+              <div class="small fw-bold">Dr. João</div>
+              <div class="small text-muted">Supervisor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content flex-grow-1 p-4">
 
     <section id="dashboard-view" class="view">
       <div class="row">
@@ -176,9 +266,237 @@
       </div>
     </section>
 
-  </main>
+    <section id="settings-view" class="view" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-gear"></i> Configurações da Conta</h2>
+        <button class="btn btn-outline-secondary" onclick="showView('dashboard-view')"><i class="bi bi-arrow-left"></i> Voltar</button>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="bi bi-person-circle"></i> Dados Pessoais</h5>
+            </div>
+            <div class="card-body">
+              <form id="form-settings">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" id="user-nome" class="form-control" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="user-email" class="form-control" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">CRO</label>
+                    <input type="text" id="user-cro" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Especialidade</label>
+                    <select id="user-especialidade" class="form-select">
+                      <option value="">Selecione...</option>
+                      <option value="Clínica Geral">Clínica Geral</option>
+                      <option value="Ortodontia">Ortodontia</option>
+                      <option value="Endodontia">Endodontia</option>
+                      <option value="Periodontia">Periodontia</option>
+                      <option value="Cirurgia">Cirurgia Oral</option>
+                      <option value="Prótese">Prótese Dentária</option>
+                      <option value="Odontopediatria">Odontopediatria</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Telefone</label>
+                    <input type="text" id="user-telefone" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Função</label>
+                    <select id="user-funcao" class="form-select">
+                      <option value="Professor">Professor</option>
+                      <option value="Supervisor">Supervisor</option>
+                      <option value="Coordenador">Coordenador</option>
+                      <option value="Dentista">Dentista</option>
+                    </select>
+                  </div>
+                </div>
+                <hr>
+                <h6 class="mb-3"><i class="bi bi-shield-lock"></i> Alterar Senha</h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Senha Atual</label>
+                    <input type="password" id="user-senha-atual" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nova Senha</label>
+                    <input type="password" id="user-nova-senha" class="form-control">
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Salvar Alterações
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" onclick="loadUserSettings()">
+                    <i class="bi bi-arrow-clockwise"></i> Recarregar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="bi bi-info-circle"></i> Informações da Conta</h6>
+            </div>
+            <div class="card-body">
+              <p><strong>ID do Usuário:</strong> <span id="user-id">-</span></p>
+              <p><strong>Último Login:</strong> <span id="user-ultimo-login">-</span></p>
+              <p><strong>Data de Criação:</strong> <span id="user-data-criacao">-</span></p>
+              <p><strong>Status:</strong> <span id="user-status" class="badge bg-success">Ativo</span></p>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="bi bi-palette"></i> Preferências</h6>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Tema</label>
+                <select id="user-tema" class="form-select">
+                  <option value="light">Claro</option>
+                  <option value="dark">Escuro</option>
+                  <option value="auto">Automático</option>
+                </select>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="user-notificacoes">
+                <label class="form-check-label" for="user-notificacoes">
+                  Receber notificações por e-mail
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chat-view" class="view" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-robot"></i> Assistente IA - Clínica Odonto</h2>
+        <button class="btn btn-outline-secondary" onclick="showView('dashboard-view')"><i class="bi bi-arrow-left"></i> Voltar</button>
+      </div>
+
+      <div class="row h-100">
+        <div class="col-md-8">
+          <div class="card chat-container">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0"><i class="bi bi-chat-dots"></i> Conversa com o Assistente</h6>
+                <small class="text-muted">Tire dúvidas sobre procedimentos, pacientes e agendamentos</small>
+              </div>
+              <button class="btn btn-sm btn-outline-danger" onclick="clearChat()">
+                <i class="bi bi-trash"></i> Limpar
+              </button>
+            </div>
+            <div class="card-body p-0">
+              <div id="chat-messages" class="chat-messages">
+                <div class="message bot-message">
+                  <div class="message-avatar">
+                    <i class="bi bi-robot"></i>
+                  </div>
+                  <div class="message-content">
+                    <div class="message-text">
+                      Olá! Sou o assistente da Clínica Escola Odonto. Posso ajudá-lo com:
+                      <ul class="mt-2 mb-0">
+                        <li>Informações sobre pacientes</li>
+                        <li>Procedimentos odontológicos</li>
+                        <li>Agendamentos e consultas</li>
+                        <li>Dúvidas administrativas</li>
+                      </ul>
+                      Como posso ajudá-lo hoje?
+                    </div>
+                    <div class="message-time">Agora</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <form id="chat-form" class="d-flex gap-2">
+                <input type="text" id="chat-input" class="form-control" placeholder="Digite sua pergunta..." autocomplete="off">
+                <button type="submit" class="btn btn-primary" id="send-button">
+                  <i class="bi bi-send"></i>
+                </button>
+              </form>
+              <div class="mt-2">
+                <small class="text-muted">
+                  <i class="bi bi-lightbulb"></i> Dica: Seja específico em suas perguntas para respostas mais precisas
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="bi bi-lightning"></i> Perguntas Rápidas</h6>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Quantos pacientes temos hoje?')">
+                  <i class="bi bi-people me-2"></i>Pacientes de hoje
+                </button>
+                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Qual é o próximo paciente?')">
+                  <i class="bi bi-clock me-2"></i>Próximo paciente
+                </button>
+                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Como fazer uma restauração?')">
+                  <i class="bi bi-tools me-2"></i>Procedimentos
+                </button>
+                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Protocolo de anamnese')">
+                  <i class="bi bi-clipboard-check me-2"></i>Protocolos
+                </button>
+                <button class="btn btn-outline-primary btn-sm text-start" onclick="sendQuickQuestion('Emergências odontológicas')">
+                  <i class="bi bi-exclamation-triangle me-2"></i>Emergências
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="bi bi-info-circle"></i> Status do Assistente</h6>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <div class="status-indicator online me-2"></div>
+                <span class="small">Online e disponível</span>
+              </div>
+              <div class="small text-muted">
+                <strong>Última atualização:</strong><br>
+                15/08/2025 - 10:30
+              </div>
+              <div class="small text-muted mt-2">
+                <strong>Conhecimento:</strong><br>
+                Procedimentos odontológicos, gestão clínica, protocolos de segurança
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

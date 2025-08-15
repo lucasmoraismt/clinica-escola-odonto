@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Chat</title>
+</head>
+<body>
+    <h1>Teste do Chat</h1>
+    <button onclick="testarChat()">Testar Chat</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function testarChat() {
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: 'teste' })
+                });
+                
+                const result = await response.json();
+                document.getElementById('resultado').innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                console.log('Resposta:', result);
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `<pre>Erro: ${error.message}</pre>`;
+                console.error('Erro:', error);
+            }
+        }
+    </script>
+</body>
+</html>

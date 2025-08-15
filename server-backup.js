@@ -11,11 +11,6 @@ const app = express();
 const messageQueue = new EventEmitter();
 const PORT = 3000;
 
-// Testar se as rotas básicas funcionam
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date() });
-});
-
 // 3. Configurar os Middlewares
 app.use(cors());
 app.use(express.json());
