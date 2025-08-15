@@ -20,13 +20,11 @@ const AUTH_TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRw
 // -------------------------
 
 // =======================================================================
-//  "CONSUMERS" / "WORKERS" - Nenhuma alteração aqui
+//  "CONSUMERS" / "WORKERS"
 // =======================================================================
-
 messageQueue.on('CADASTRAR_PACIENTE', async (pacienteData) => {
   console.log('[WORKER] Recebido evento CADASTRAR_PACIENTE:', pacienteData.name);
   try {
-    //
     await axios.post(`${TISAUDE_BASE_URL}/api/patients/create`, pacienteData, {
       headers: { 'Authorization': AUTH_TOKEN }
     });
@@ -36,98 +34,80 @@ messageQueue.on('CADASTRAR_PACIENTE', async (pacienteData) => {
   }
 });
 
-messageQueue.on('AGENDAR_CONSULTA', async (agendamentoData) => {
-  console.log('[WORKER] Recebido evento AGENDAR_CONSULTA para o paciente ID:', agendamentoData.idPatient);
-  try {
-    //
-    await axios.post(`${TISAUDE_BASE_URL}/api/schedule/new`, agendamentoData, {
-      headers: { 'Authorization': AUTH_TOKEN }
-    });
-    console.log(`[WORKER] Consulta para o paciente ID ${agendamentoData.idPatient} agendada!`);
-  } catch (error) {
-    console.error(`[WORKER] Falha ao agendar consulta:`, error.response ? error.response.data : error.message);
-  }
-});
-
-
 // =======================================================================
 //  ROTAS DA API (ENDPOINT) - "PRODUCERS"
 // =======================================================================
-
-// --- ROTA DE CADASTRO (ASSÍNCRONA) --- (Nenhuma alteração aqui)
 app.post('/api/pacientes', (req, res) => {
   const pacienteData = req.body;
   console.log('[PRODUCER] Recebida requisição para cadastrar paciente:', pacienteData.name);
   messageQueue.emit('CADASTRAR_PACIENTE', pacienteData);
   res.status(202).json({ message: 'Solicitação de cadastro recebida e sendo processada.' });
 });
-// server.js
 
-// --- ROTA DE BUSCA (SÍNCRONA) --- (*** CÓDIGO CORRIGIDO ***)
 app.get('/api/pacientes', async (req, res) => {
   const termoBusca = req.query.termo || '';
-
   try {
     const response = await axios.get(`${TISAUDE_BASE_URL}/api/patients`, {
       headers: { 'Authorization': AUTH_TOKEN },
       params: { search: termoBusca }
     });
-
-    // CORREÇÃO: A API retorna a lista dentro da chave "data"
-    const listaExterna = response.data.data; 
-    
-    // CORREÇÃO: O ID do paciente é "id" na lista
+    const listaExterna = response.data.data;
     const pacientesSimplificados = listaExterna.map(paciente => ({
-      id: paciente.id, 
+      id: paciente.id,
       name: paciente.name,
       cpf: paciente.cpf,
       dateOfBirth: paciente.dateOfBirth
     }));
-
     res.json(pacientesSimplificados);
-
   } catch (error) {
     console.error('Erro ao buscar pacientes:', error.response ? error.response.data : error.message);
     res.status(500).json({ message: 'Falha ao buscar pacientes.' });
   }
 });
 
-// --- ROTA PARA BUSCAR DETALHES DE UM ÚNICO PACIENTE --- (*** CÓDIGO CORRIGIDO ***)
+// --- ROTA PARA BUSCAR DADOS DE IDENTIFICAÇÃO DO PACIENTE ---
 app.get('/api/pacientes/:id', async (req, res) => {
   const pacienteId = req.params.id;
-
   try {
-    // CORREÇÃO: Adicionado o "#" antes do ID do paciente na URL da API externa
-    const response = await axios.get(`${TISAUDE_BASE_URL}/api/patients/#${pacienteId}`, {
+    const response = await axios.get(`${TISAUDE_BASE_URL}/api/patients/${pacienteId}`, {
       headers: { 'Authorization': AUTH_TOKEN }
     });
-
-    const dadosPaciente = response.data.data;
-    const pacienteSimplificado = {
-      idPatient: dadosPaciente.idPatient,
-      name: dadosPaciente.name,
-      cpf: dadosPaciente.cpf,
-      dateOfBirth: dadosPaciente.dateOfBirth,
-      cellphone: dadosPaciente.cellphone,
-      email: dadosPaciente.email
-    };
-
-    res.json(pacienteSimplificado);
-
+    // Apenas repassamos a resposta completa, pois o frontend irá tratá-la
+    res.json(response.data);
   } catch (error) {
     console.error(`Erro ao buscar detalhes do paciente ${pacienteId}:`, error.response ? error.response.data : error.message);
     res.status(500).json({ message: 'Falha ao buscar detalhes do paciente.' });
   }
 });
 
-// --- ROTA DE AGENDAMENTO (ASSÍNCRONA) --- (Nenhuma alteração aqui)
-app.post('/api/agendamentos', (req, res) => {
-  const agendamentoData = req.body;
-  console.log('[PRODUCER] Recebida requisição para agendar consulta:', agendamentoData);
-  messageQueue.emit('AGENDAR_CONSULTA', agendamentoData);
-  res.status(202).json({ message: 'Solicitação de agendamento recebida e sendo processada.' });
+// --- NOVA ROTA: BUSCAR HISTÓRICO (TIMELINE) DO PACIENTE ---
+app.get('/api/pacientes/:id/timeline', async (req, res) => {
+  const pacienteId = req.params.id;
+  try {
+    const response = await axios.get(`${TISAUDE_BASE_URL}/api/patients/${pacienteId}/timeline/detailed`, {
+      headers: { 'Authorization': AUTH_TOKEN }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error(`Erro ao buscar timeline do paciente ${pacienteId}:`, error.response ? error.response.data : error.message);
+    res.status(500).json({ message: 'Falha ao buscar timeline do paciente.' });
+  }
 });
 
+// --- NOVA ROTA: BUSCAR FICHAS (ANAMNESE) DO PACIENTE ---
+app.get('/api/pacientes/:id/fichas', async (req, res) => {
+  const pacienteId = req.params.id;
+  try {
+    const response = await axios.get(`${TISAUDE_BASE_URL}/api/patients/${pacienteId}/ehr/list`, {
+      headers: { 'Authorization': AUTH_TOKEN },
+      params: { tab: 'fichas' }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error(`Erro ao buscar fichas do paciente ${pacienteId}:`, error.response ? error.response.data : error.message);
+    res.status(500).json({ message: 'Falha ao buscar fichas do paciente.' });
+  }
+});
 
 // Iniciar o servidor
 app.listen(PORT, () => {

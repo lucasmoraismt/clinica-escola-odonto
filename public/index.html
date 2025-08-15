@@ -133,95 +133,46 @@
 
     <section id="paciente-detail-view" class="view" style="display: none;">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 id="detalhes-nome-paciente" class="mb-0"></h2>
+        <h2 id="detalhes-header-nome" class="mb-0"></h2>
         <button class="btn btn-outline-secondary" onclick="showView('paciente-search-view')"><i class="bi bi-arrow-left"></i> Voltar para a Busca</button>
       </div>
 
       <ul class="nav nav-tabs" id="prontuarioTab" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#resumo-tab" type="button">Identificação</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#identificacao-tab" type="button">Identificação</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#anamnese-tab" type="button">Anamnese</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#odontograma-tab" type="button">Odontograma</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#plano-tab" type="button">Plano de Tratamento</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#evolucao-tab" type="button">Evolução Clínica</button></li>
       </ul>
 
       <div class="tab-content border border-top-0 p-3" id="prontuarioTabContent">
         
-        <div class="tab-pane fade show active" id="resumo-tab">
-          <h5><i class="bi bi-person-vcard"></i> Dados do Paciente</h5>
+        <div class="tab-pane fade show active" id="identificacao-tab">
           <div class="row">
-            <div class="col-md-6">
-              <p><strong>Nome Completo:</strong> <span id="detalhes-nome-completo"></span></p>
-              <p><strong>CPF:</strong> <span id="detalhes-cpf"></span></p>
-              <p><strong>Data de Nasc.:</strong> <span id="detalhes-dataNascimento"></span></p>
-              <p><strong>Idade:</strong> <span id="detalhes-idade"></span></p>
-            </div>
-            <div class="col-md-6">
-              <p><strong>Nome da Mãe:</strong> <span id="detalhes-mae">Não informado</span></p>
-              <p><strong>Telefone:</strong> <span id="detalhes-celular"></span></p>
-              <p><strong>ID do Sistema:</strong> <span id="detalhes-id"></span></p>
-              <p><strong>Convênio:</strong> <span id="detalhes-convenio">Particular</span></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="anamnese-tab">
-          <h5><i class="bi bi-clipboard2-pulse"></i> Histórico Clínico</h5>
-          <p><strong>Queixa Principal:</strong> Dor de dente há 3 dias no lado superior direito.</p>
-          <hr>
-          <h6>Antecedentes Pessoais</h6>
-          <p>Nega alergias. Faz uso de Losartana para hipertensão.</p>
-          <hr>
-          <h6>Hábitos de Vida</h6>
-          <p>Tabagista (10 cigarros/dia), etilismo social. Nega prática de atividade física.</p>
-        </div>
-
-        <div class="tab-pane fade" id="odontograma-tab">
-          <h5><i class="bi bi-grid-3x3"></i> Odontograma</h5>
-          <p class="text-muted">Representação do estado dental do paciente. Em uma versão completa, este seria um gráfico interativo.</p>
-          <img src="https://i.imgur.com/8a5t1nL.png" class="img-fluid" alt="Odontograma de exemplo">
-        </div>
-
-        <div class="tab-pane fade" id="plano-tab">
-          <h5><i class="bi bi-card-checklist"></i> Plano de Tratamento</h5>
-          <table class="table table-sm">
-            <thead><tr><th>Procedimento</th><th>Dente/Região</th><th>Status</th><th>Profissional</th></tr></thead>
-            <tbody>
-              <tr><td>Restauração</td><td>16</td><td><span class="badge bg-success">Concluído</span></td><td>Ana Beatriz</td></tr>
-              <tr><td>Exodontia</td><td>18</td><td><span class="badge bg-warning">Em Andamento</span></td><td>Carlos Andrade</td></tr>
-              <tr><td>Clareamento</td><td>Todos</td><td><span class="badge bg-info">Planejado</span></td><td>Carlos Andrade</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="tab-pane fade" id="evolucao-tab">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5><i class="bi bi-graph-up-arrow"></i> Evolução Clínica</h5>
-            <button class="btn btn-success btn-sm"><i class="bi bi-plus"></i> Nova Evolução</button>
-          </div>
-          <div class="mt-3">
-            <textarea class="form-control" rows="3" placeholder="Digite a nova evolução do paciente aqui..."></textarea>
-          </div>
-          <hr>
-          <h6>Histórico de Atendimentos</h6>
-          <div class="accordion" id="evolucaoAccordion">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                  <strong>14/08/2025</strong> - Restauração dente 16
-                </button>
-              </h2>
-              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#evolucaoAccordion">
-                <div class="accordion-body">
-                  <strong>Aluno:</strong> Carlos Andrade<br>
-                  <strong>Professor Supervisor:</strong> Dr. Ricardo Souza<br>
-                  <strong>Descrição:</strong> Realizada profilaxia e restauração em resina composta no dente 16. Paciente orientado sobre cuidados de higiene oral.
+            <div class="col-md-8">
+              <h5><i class="bi bi-person-vcard"></i> Dados Pessoais</h5>
+              <div class="row">
+                <div class="col-lg-6">
+                  <p><strong>Nome Completo:</strong> <span id="detalhes-nome-completo"></span></p>
+                  <p><strong>CPF:</strong> <span id="detalhes-cpf"></span></p>
+                  <p><strong>Data de Nasc.:</strong> <span id="detalhes-dataNascimento"></span></p>
+                  <p><strong>Idade:</strong> <span id="detalhes-idade"></span></p>
+                </div>
+                <div class="col-lg-6">
+                  <p><strong>Nome da Mãe:</strong> <span id="detalhes-mae"></span></p>
+                  <p><strong>Sexo/Gênero:</strong> <span id="detalhes-sexo"></span></p>
+                  <p><strong>Telefone:</strong> <span id="detalhes-celular"></span></p>
+                  <p><strong>Email:</strong> <span id="detalhes-email"></span></p>
                 </div>
               </div>
             </div>
+            <div class="col-md-4 border-start">
+              <h5><i class="bi bi-folder2-open"></i> Dados Administrativos</h5>
+              <p><strong>ID do Prontuário:</strong> <span id="detalhes-id"></span></p>
+              <p><strong>Convênio:</strong> <span id="detalhes-convenio"></span></p>
+              <p><strong>Status:</strong> <span id="detalhes-status" class="badge"></span></p>
+            </div>
           </div>
         </div>
-
       </div>
     </section>
 
